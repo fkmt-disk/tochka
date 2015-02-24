@@ -14,12 +14,14 @@ class Query[SchemaType, EntityType: TypeTag](
 
   def fetch(implicit database: MongoDB): Seq[EntityType] = {
     val cond = {
-      val builder = DBObject.newBuilder
-      for (c <- condition) builder += c.value
+      val builder = MongoDBObject.newBuilder
+      for (c <- condition) builder ++= c.value
       builder.result
     }
 
     val name = getCollctionName(typeOf[EntityType])
+
+    //cond.foreach(println)
 
     database(name).find(cond).toList.map { dbo =>
       Converter.toEntity[EntityType](dbo)

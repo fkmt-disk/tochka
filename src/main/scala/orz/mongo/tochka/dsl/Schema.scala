@@ -23,4 +23,9 @@ class Schema[EntityType: TypeTag] {
     coll.insert(Converter.toMap(entity))
   }
 
+  def drop(implicit database: MongoDB) {
+    val name = getCollctionName(typeOf[EntityType])
+    database(name).drop
+  }
+
 }
