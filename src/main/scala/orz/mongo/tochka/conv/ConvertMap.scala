@@ -9,13 +9,6 @@ private[conv]
 object ConvertMap {
 
   private
-  implicit class Cast(any: Any) {
-    def asSeq: Seq[_] = any.asInstanceOf[Seq[_]]
-    def asMap: Map[String, _] = any.asInstanceOf[Map[String, _]]
-    def asOpt: Option[_] = any.asInstanceOf[Option[_]]
-  }
-
-  private
   def inspect(obj: Any): Seq[(String, Any, Type)] = {
     val clsType = obj.getClass.toType
     val constructor = clsType.getConstructor
@@ -91,6 +84,13 @@ object ConvertMap {
       case _ =>
         map
     }
+  }
+
+  private implicit
+  class Castable(any: Any) {
+    def asSeq: Seq[_] = any.asInstanceOf[Seq[_]]
+    def asMap: Map[String, _] = any.asInstanceOf[Map[String, _]]
+    def asOpt: Option[_] = any.asInstanceOf[Option[_]]
   }
 
 }
