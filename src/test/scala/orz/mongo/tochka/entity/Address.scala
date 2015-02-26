@@ -7,8 +7,8 @@ case class Address(zip: String, address: String)
 
 object Address extends Schema[Address] {
 
-  case object zip extends TextField[Address]
+  case object zip extends AnyRefField[String]
 
-  case object address extends TextField[Address]
+  case object address extends AnyRefField[String]
 
 }

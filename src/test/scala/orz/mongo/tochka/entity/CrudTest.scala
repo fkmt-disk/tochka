@@ -31,13 +31,13 @@ class CrudTest extends FunSuite with Matchers with BeforeAndAfterAll {
   test("insert") {
     Mongo.drive(conf) { implicit db =>
 
-      User.find().fetch.size shouldBe 0
+      User.find().size shouldBe 0
 
       val result = User.insert(testee)
 
       info(result.toString)
 
-      User.find().fetch.size shouldBe 1
+      User.find().size shouldBe 1
 
     }
   }
@@ -45,7 +45,7 @@ class CrudTest extends FunSuite with Matchers with BeforeAndAfterAll {
   test("find") {
     Mongo.drive(conf) { implicit db =>
 
-      val users = User.find(_._id eql testee._id).fetch
+      val users = User.find(_._id eql testee._id)
 
       users.size shouldBe 1
 

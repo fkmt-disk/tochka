@@ -51,3 +51,30 @@ val user = User(new ObjectId, 2, "user2", None)
 
 User.insert(user)
 ```
+
+
+#### find $all
+
+```scala
+import orz.mongo.tochka._
+
+@Entity case class User(name: String, email: Seq[String])
+
+object User extends Schema[User] {
+  case object name extends TextField[User]
+  case object email extends SeqField[User, Seq[String]]
+}
+```
+
+```scala
+import com.mongodb.casbah.Imports._
+
+implicit val db: MongoDB = ...
+
+val condition = Seq("user1@example.com", "user1@example.org")
+
+val result = User.find(_.email all condition).fetch
+
+// In the case of casbah
+// => db("User").find("email" $all condition).toList
+```

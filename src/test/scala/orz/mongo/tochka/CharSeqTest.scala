@@ -28,7 +28,7 @@ class CharSeqTest extends FunSuite with Matchers with BeforeAndAfterAll {
     Mongo.drive(conf) { implicit db =>
       val condition = "abc".toCharArray
 
-      val tochka = CharSeq.find(_.chars all condition).fetch
+      val tochka = CharSeq.find(_.chars all condition)
 
       tochka.size shouldBe 1
       tochka(0) shouldEqual testee(0)
@@ -51,7 +51,7 @@ class CharSeqTest extends FunSuite with Matchers with BeforeAndAfterAll {
     Mongo.drive(conf) { implicit db =>
       val condition = "bc".toCharArray
 
-      val tochka = CharSeq.find(_.chars all condition).fetch
+      val tochka = CharSeq.find(_.chars all condition)
 
       tochka.size shouldBe 2
       assert(tochka.find(_ == testee(0)).isDefined)
@@ -75,7 +75,7 @@ class CharSeqTest extends FunSuite with Matchers with BeforeAndAfterAll {
     Mongo.drive(conf) { implicit db =>
       val condition = Seq('c')
 
-      val tochka = CharSeq.find(_.chars all condition).fetch
+      val tochka = CharSeq.find(_.chars all condition)
 
       tochka.size shouldBe 3
       assert(tochka.find(_ == testee(0)).isDefined)
@@ -100,7 +100,7 @@ class CharSeqTest extends FunSuite with Matchers with BeforeAndAfterAll {
     Mongo.drive(conf) { implicit db =>
       val condition = "fed".toCharArray
 
-      val tochka = CharSeq.find(_.chars all condition).fetch
+      val tochka = CharSeq.find(_.chars all condition)
 
       tochka.size shouldBe 1
       tochka(0) shouldEqual testee(3)
@@ -123,7 +123,7 @@ class CharSeqTest extends FunSuite with Matchers with BeforeAndAfterAll {
     Mongo.drive(conf) { implicit db =>
       val condition = "abd".toCharArray
 
-      val tochka = CharSeq.find(_.chars all condition).fetch
+      val tochka = CharSeq.find(_.chars all condition)
 
       tochka.size shouldBe 0
 
@@ -139,6 +139,9 @@ class CharSeqTest extends FunSuite with Matchers with BeforeAndAfterAll {
 case class CharSeq(chars: Seq[Char], _id: Option[ObjectId] = Some(new ObjectId))
 
 object CharSeq extends Schema[CharSeq] {
-  case object _id extends SeqField[CharSeq, Option[ObjectId]]
-  case object chars extends SeqField[CharSeq, Seq[Char]]
+
+  case object chars extends SeqField[Char]
+
+  case object _id extends AnyRefField[Option[ObjectId]]
+
 }

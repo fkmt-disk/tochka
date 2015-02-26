@@ -7,17 +7,15 @@ trait Field {
 
   type FieldType
 
-  type EntityType
+  val name = toString
+
+  def eql(value: FieldType): MongoDBObject = name $eq value
+
+  def neq(value: FieldType): MongoDBObject = name $ne value
 
   protected
   implicit val TypeQueryParam = new AsQueryParam[FieldType] {
     def asQueryParam(a: FieldType) = identity(a)
   }
-
-  val name = toString
-
-  def eql(value: FieldType) = Condition[EntityType](name $eq value)
-
-  def neq(value: FieldType) = Condition[EntityType](name $ne value)
 
 }

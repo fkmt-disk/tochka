@@ -2,15 +2,19 @@ package orz.mongo
 
 package object tochka {
 
-  type Schema[EntityType] = dsl.Schema[EntityType]
+  type Schema[T] = dsl.Schema[T]
 
-  type GenericField[EntityType, FieldType] = dsl.GenericField[EntityType, FieldType]
+  type BoolField = dsl.BoolField
 
-  type TextField[EntityType] = dsl.TextField[EntityType]
+  type IntField = dsl.IntField
 
-  type NumberField[EntityType, FieldType <: Number] = dsl.NumberField[EntityType, FieldType]
+  type LongField = dsl.LongField
 
-  type SeqField[EntityType, FieldType] = dsl.SeqField[EntityType, FieldType]
+  type DoubleField = dsl.DoubleField
+
+  type SeqField[T] = dsl.SeqField[T]
+
+  type AnyRefField[T <: AnyRef] = dsl.AnyRefField[T]
 
   type CollectionName = dsl.CollectionName
 

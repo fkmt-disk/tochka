@@ -14,12 +14,12 @@ case class User(
 
 object User extends Schema[User] {
 
-  case object _id extends GenericField[User, Option[ObjectId]]
+  case object _id extends AnyRefField[Option[ObjectId]]
 
-  case object name extends TextField[User]
+  case object name extends AnyRefField[String]
 
-  case object email extends TextField[User]
+  case object email extends AnyRefField[String]
 
-  case object address extends SeqField[User, Option[Seq[Address]]]
+  case object address extends SeqField[Address]
 
 }
