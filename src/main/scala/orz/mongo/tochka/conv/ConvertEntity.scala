@@ -89,11 +89,12 @@ object ConvertEntity {
     def asDbList: BasicDBList = any.asInstanceOf[BasicDBList]
 
     def cast(typ: Type) = any match {
-      case s: String => ofString(typ, s)
-      case i: Int    => ofInt(typ, i)
-      case l: Long   => ofLong(typ, l)
-      case d: Double => ofDouble(typ, d)
-      case obj       => scala.reflect.runtime.currentMirror.runtimeClass(typ).cast(obj)
+      case s: String  => ofString(typ, s)
+      case i: Int     => ofInt(typ, i)
+      case l: Long    => ofLong(typ, l)
+      case d: Double  => ofDouble(typ, d)
+      case b: Boolean => b
+      case obj        => scala.reflect.runtime.currentMirror.runtimeClass(typ).cast(obj)
     }
 
     private
