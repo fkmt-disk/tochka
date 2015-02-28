@@ -2,15 +2,15 @@ package orz.mongo.tochka.dsl
 
 import com.mongodb.casbah.Imports._
 
-private[tochka] abstract
-trait SeqField[T] extends Field  {
+private[tochka]
+trait SeqField[T] extends Field {
 
   type FieldType = Seq[T]
 
-  def all(value: Seq[T]): MongoDBObject = name $all value
+  def /++(value: Seq[T]): Condition = new Condition(name $all value)
 
-  def in(value: Seq[T]): MongoDBObject = name $in value
+  def /+(value: Seq[T]): Condition = new Condition(name $in value)
 
-  def nin(value: Seq[T]): MongoDBObject = name $nin value
+  def /-(value: Seq[T]): Condition = new Condition(name $nin value)
 
 }

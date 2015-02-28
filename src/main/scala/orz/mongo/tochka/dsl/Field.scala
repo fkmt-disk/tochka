@@ -9,12 +9,12 @@ trait Field {
 
   val name = toString
 
-  def eql(value: FieldType): MongoDBObject = name $eq value
+  def ==(value: FieldType): Condition = new Condition(name $eq value)
 
-  def neq(value: FieldType): MongoDBObject = name $ne value
+  def !=(value: FieldType): Condition = new Condition(name $ne value)
 
-  protected
-  implicit val TypeQueryParam = new AsQueryParam[FieldType] {
+  protected implicit
+  val TypeQueryParam = new AsQueryParam[FieldType] {
     def asQueryParam(a: FieldType) = identity(a)
   }
 

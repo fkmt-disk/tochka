@@ -5,16 +5,12 @@ import com.mongodb.casbah.Imports._
 private[dsl]
 trait ComparableField extends Field {
 
-  type FieldType
+  def <(value: FieldType): Condition = new Condition(name $lt value)
 
-  val name: String
+  def <=(value: FieldType): Condition = new Condition(name $lte value)
 
-  def lt(value: FieldType): MongoDBObject = name $lt value
+  def >(value: FieldType): Condition = new Condition(name $gt value)
 
-  def lte(value: FieldType): MongoDBObject = name $lte value
-
-  def gt(value: FieldType): MongoDBObject = name $gt value
-
-  def gte(value: FieldType): MongoDBObject = name $gte value
+  def >=(value: FieldType): Condition = new Condition(name $gte value)
 
 }
