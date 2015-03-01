@@ -1,13 +1,13 @@
-package orz.mongo.tochka
+package orz.mongo.tochka.test
 
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe._
 
 import com.typesafe.config.Config
 
-package object test {
+package object util {
 
-  private[test]
+  private[util]
   implicit class ConfigW(conf: Config) {
 
     def get[T: TypeTag](name: String): Option[T] = if (!conf.hasPath(name)) None else {

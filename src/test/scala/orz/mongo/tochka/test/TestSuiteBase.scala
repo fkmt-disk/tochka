@@ -1,4 +1,4 @@
-package orz.mongo.tochka.suite
+package orz.mongo.tochka.test
 
 import scala.language.reflectiveCalls
 
@@ -6,12 +6,16 @@ import scala.reflect.runtime.universe._
 
 import org.scalatest._
 
-import orz.mongo.tochka.util.ReflectionUtil._
-
 import com.mongodb.casbah.Imports._
 
+import com.typesafe.config.ConfigFactory
+
+import orz.mongo.tochka.util.ReflectionUtil._
+
 abstract
-class FieldTest[T: TypeTag] extends FunSuite with Matchers {
+class TestSuiteBase[T: TypeTag] extends FunSuite with Matchers {
+  
+  val conf = ConfigFactory.load
   
   val testee: Seq[T]
   

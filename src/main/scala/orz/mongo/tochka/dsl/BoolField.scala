@@ -1,7 +1,7 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-trait BoolField extends Field {
+class BoolField(val prefix: String = "") extends Field {
 
   type FieldType = Boolean
 

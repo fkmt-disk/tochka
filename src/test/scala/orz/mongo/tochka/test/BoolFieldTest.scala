@@ -1,15 +1,11 @@
-package orz.mongo.tochka.suite
+package orz.mongo.tochka.test
 
 import com.mongodb.casbah.Imports._
 
-import com.typesafe.config.ConfigFactory
-
 import orz.mongo.tochka._
-import orz.mongo.tochka.test.Mongo
+import orz.mongo.tochka.test.util.Mongo
 
-class BoolFieldTest extends FieldTest[Flags] {
-  
-  val conf = ConfigFactory.load
+class BoolFieldTest extends TestSuiteBase[Flags] {
   
   val testee = Seq(Flags(false), Flags(true), Flags(false))
   
@@ -39,8 +35,8 @@ class BoolFieldTest extends FieldTest[Flags] {
       
       val cond = true
       
-      info(s"Flags.find(flag == $cond)")
-      val result = Flags.find(_.flag == cond)
+      info(s"Flags.where(flag == $cond).find")
+      val result = Flags.where(_.flag == cond).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_.flag == cond).sortBy(_._id)
@@ -63,7 +59,7 @@ class BoolFieldTest extends FieldTest[Flags] {
       val cond = true
       
       info(s"Flags.find(flag != $cond)")
-      val result = Flags.find(_.flag != cond)
+      val result = Flags.where(_.flag != cond).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_.flag != cond).sortBy(_._id)

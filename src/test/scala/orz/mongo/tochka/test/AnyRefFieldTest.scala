@@ -1,4 +1,4 @@
-package orz.mongo.tochka.suite
+package orz.mongo.tochka.test
 
 import java.util.Date
 import java.text.SimpleDateFormat
@@ -7,14 +7,10 @@ import scala.util.Random
 
 import com.mongodb.casbah.Imports._
 
-import com.typesafe.config.ConfigFactory
-
 import orz.mongo.tochka._
-import orz.mongo.tochka.test.Mongo
+import orz.mongo.tochka.test.util.Mongo
 
-class AnyRefFieldTest extends FieldTest[Box] {
-  
-  val conf = ConfigFactory.load
+class AnyRefFieldTest extends TestSuiteBase[Box] {
   
   val testee = Seq(
     Box("alpha", new Date),
@@ -54,8 +50,8 @@ class AnyRefFieldTest extends FieldTest[Box] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Box.find(text == ${cond.text})")
-      val result = Box.find(_.text == cond.text)
+      info(s"Box.where(text == ${cond.text}).find")
+      val result = Box.where(_.text == cond.text).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_.text == cond.text).sortBy(_._id)
@@ -77,8 +73,8 @@ class AnyRefFieldTest extends FieldTest[Box] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Box.find(text != ${cond.text})")
-      val result = Box.find(_.text != cond.text)
+      info(s"Box.where(text != ${cond.text}).find")
+      val result = Box.where(_.text != cond.text).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_.text != cond.text).sortBy(_._id)
@@ -100,8 +96,8 @@ class AnyRefFieldTest extends FieldTest[Box] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Box.find(date == ${cond.date.fmtStr})")
-      val result = Box.find(_.date == cond.date)
+      info(s"Box.where(date == ${cond.date.fmtStr}).find")
+      val result = Box.where(_.date == cond.date).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_.date == cond.date).sortBy(_._id)
@@ -123,8 +119,8 @@ class AnyRefFieldTest extends FieldTest[Box] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Box.find(date != ${cond.date.fmtStr})")
-      val result = Box.find(_.date != cond.date)
+      info(s"Box.where(date != ${cond.date.fmtStr}).find")
+      val result = Box.where(_.date != cond.date).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_.date != cond.date).sortBy(_._id)
@@ -146,8 +142,8 @@ class AnyRefFieldTest extends FieldTest[Box] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Box.find(_id == ${cond._id})")
-      val result = Box.find(_._id == cond._id)
+      info(s"Box.where(_id == ${cond._id}).find")
+      val result = Box.where(_._id == cond._id).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_._id == cond._id).sortBy(_._id)
@@ -169,8 +165,8 @@ class AnyRefFieldTest extends FieldTest[Box] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Box.find(_id != ${cond._id})")
-      val result = Box.find(_._id != cond._id)
+      info(s"Box.where(_id != ${cond._id}).find")
+      val result = Box.where(_._id != cond._id).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(_._id != cond._id).sortBy(_._id)

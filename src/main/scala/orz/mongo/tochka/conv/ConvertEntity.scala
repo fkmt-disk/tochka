@@ -41,7 +41,7 @@ object ConvertEntity {
       case (t, Some(value), _) if t <:< SeqType =>
         convSeq(t, value.asDbList)
       case (t, Some(value), _) if conv.isEntity(t) =>
-        convert(typ, value.asDbObj)
+        convert(t, value.asDbObj)
       case (t, Some(value), _) =>
         value.cast(t)
     }

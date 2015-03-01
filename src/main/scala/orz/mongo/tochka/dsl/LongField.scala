@@ -1,7 +1,7 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-trait LongField extends ComparableField {
+class LongField(val prefix: String = "") extends ComparableField {
 
   type FieldType = Long
 

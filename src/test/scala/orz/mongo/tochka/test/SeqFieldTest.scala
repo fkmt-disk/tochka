@@ -1,15 +1,11 @@
-package orz.mongo.tochka.suite
+package orz.mongo.tochka.test
 
 import com.mongodb.casbah.Imports._
 
-import com.typesafe.config.ConfigFactory
-
 import orz.mongo.tochka._
-import orz.mongo.tochka.test.Mongo
+import orz.mongo.tochka.test.util.Mongo
 
-class SeqFieldTest extends FieldTest[Texts] {
-  
-  val conf = ConfigFactory.load
+class SeqFieldTest extends TestSuiteBase[Texts] {
   
   val testee = Seq(
     Texts(Seq("a", "b", "c")),
@@ -43,8 +39,8 @@ class SeqFieldTest extends FieldTest[Texts] {
       
       val cond = Seq("b", "c")
       
-      info(s"Texts.find(list /++ $cond)")
-      val result = Texts.find(_.list /++ cond)
+      info(s"Texts.where(list /++ $cond).find")
+      val result = Texts.where(_.list /++ cond).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(it => (it.list intersect cond).size == cond.size).sortBy(_._id)
@@ -66,8 +62,8 @@ class SeqFieldTest extends FieldTest[Texts] {
       
       val cond = Seq("a", "e")
       
-      info(s"Texts.find(list /+ $cond)")
-      val result = Texts.find(_.list /+ cond)
+      info(s"Texts.where(list /+ $cond).find")
+      val result = Texts.where(_.list /+ cond).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(it => (it.list intersect cond).size > 0).sortBy(_._id)
@@ -89,8 +85,8 @@ class SeqFieldTest extends FieldTest[Texts] {
       
       val cond = Seq("a", "e")
       
-      info(s"Texts.find(list /- $cond)")
-      val result = Texts.find(_.list /- cond)
+      info(s"Texts.where(list /- $cond).find")
+      val result = Texts.where(_.list /- cond).find
       result.foreach(it => info(s"-> $it"))
       
       val expect = testee.filter(it => (it.list intersect cond).size == 0).sortBy(_._id)

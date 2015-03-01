@@ -1,4 +1,4 @@
-package orz.mongo.tochka.test
+package orz.mongo.tochka.test.util
 
 import com.mongodb.casbah.Imports._
 

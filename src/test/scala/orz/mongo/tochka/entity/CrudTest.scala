@@ -5,8 +5,7 @@ import org.scalatest._
 import org.bson.types.ObjectId
 
 import com.typesafe.config.ConfigFactory
-
-import orz.mongo.tochka.test.Mongo
+import orz.mongo.tochka.test.util.Mongo
 
 class CrudTest extends FunSuite with Matchers with BeforeAndAfterAll {
 
@@ -31,13 +30,13 @@ class CrudTest extends FunSuite with Matchers with BeforeAndAfterAll {
   test("insert") {
     Mongo.drive(conf) { implicit db =>
 
-      User.find.size shouldBe 0
+      User.findAll.size shouldBe 0
 
       val result = User.insert(testee)
 
       info(result.toString)
 
-      User.find.size shouldBe 1
+      User.findAll.size shouldBe 1
 
     }
   }
@@ -45,7 +44,7 @@ class CrudTest extends FunSuite with Matchers with BeforeAndAfterAll {
   test("find") {
     Mongo.drive(conf) { implicit db =>
 
-      val users = User.find(_._id == testee._id)
+      val users = User.where(_._id == testee._id).find
 
       users.size shouldBe 1
 

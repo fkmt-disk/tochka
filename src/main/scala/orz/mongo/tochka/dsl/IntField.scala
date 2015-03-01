@@ -1,7 +1,7 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-trait IntField extends ComparableField {
+class IntField(val prefix: String = "") extends ComparableField {
 
   type FieldType = Int
 

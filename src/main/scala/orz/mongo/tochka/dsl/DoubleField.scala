@@ -1,7 +1,7 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-trait DoubleField extends ComparableField {
+class DoubleField(val prefix: String = "") extends ComparableField {
 
   type FieldType = Double
 

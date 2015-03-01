@@ -12,6 +12,8 @@ package object tochka {
 
   type DoubleField = dsl.DoubleField
 
+  type TextField = dsl.TextField
+
   type SeqField[T] = dsl.SeqField[T]
 
   type AnyRefField[T <: AnyRef] = dsl.AnyRefField[T]

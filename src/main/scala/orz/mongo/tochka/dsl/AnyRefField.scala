@@ -1,7 +1,7 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-trait AnyRefField[T <: AnyRef] extends Field {
+class AnyRefField[T <: AnyRef](val prefix: String = "") extends Field {
 
   type FieldType = T
 
