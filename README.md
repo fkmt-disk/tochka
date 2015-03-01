@@ -2,12 +2,12 @@
 
 wrapper of casbah(mongodb-driver) by scala
 
-#### find.wip
+#### find
 
 Given("a test database, like this")
 
 ```javascript
-db.users = [
+db.User = [
   {
     _id: ObjectId(...),
     code: 1,
@@ -21,14 +21,14 @@ And("given a case class, like this")
 
 ```scala
 package sample.entity
-case class User(_id: ObjectId, code: Int, name: String, email: Option[String])
+case class User(code: Int, name: String, email: Option[String], _id: ObjectId=new ObjectId)
 ```
 
 When("executed this statement")
 
 ```scala
 import sample.entity.User
-val users: Seq[User] = User.find(_.code eql 1).fetch
+val users: Seq[User] = User.where(_.name == "user1").find
 ```
 
 Then("sequence of User obtained")  
@@ -42,39 +42,27 @@ println(user.email) // => Some(user1@example)
 println(user._id) // => ObjectId(...)
 ```
 
-#### insert.wip
+
+#### insert
 
 ```scala
 import sample.entity.User
-
-val user = User(new ObjectId, 2, "user2", None)
-
+val user = User(2, "user2", None)
 User.insert(user)
 ```
 
 
-#### find $all
+#### update
 
 ```scala
-import orz.mongo.tochka._
-
-@Entity case class User(name: String, email: Seq[String])
-
-object User extends Schema[User] {
-  case object name extends TextField[User]
-  case object email extends SeqField[User, Seq[String]]
-}
+import sample.entity.User
+val count: Int = User.where(_.name == "user1").set(_.code := 100).update
 ```
 
+
+#### remove
+
 ```scala
-import com.mongodb.casbah.Imports._
-
-implicit val db: MongoDB = ...
-
-val condition = Seq("user1@example.com", "user1@example.org")
-
-val result = User.find(_.email all condition).fetch
-
-// In the case of casbah
-// => db("User").find("email" $all condition).toList
+import sample.entity.User
+val count: Int = User.where(_.name =~ "^user".r).remove
 ```
