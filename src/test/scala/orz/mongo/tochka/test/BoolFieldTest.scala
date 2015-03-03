@@ -77,7 +77,6 @@ class BoolFieldTest extends TestSuiteBase[Flags] {
   
 }
 
-@Entity
 case class Flags(flag: Boolean, _id: ObjectId = new ObjectId) {
   
   override def toString = s"Flags(flag=${flag}, _id=${_id})"

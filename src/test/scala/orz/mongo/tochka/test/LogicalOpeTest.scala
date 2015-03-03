@@ -139,7 +139,6 @@ class LogicalOpeTest extends TestSuiteBase[Triple] {
   
 }
 
-@Entity
 case class Triple(one: Boolean, two: Boolean, three: Boolean, _id: ObjectId = new ObjectId) {
   
   override def toString = s"Triple(one=${one}, two=${two}, three=${three}, _id=${_id})"

@@ -108,7 +108,6 @@ class TextFieldTest extends TestSuiteBase[Text] {
   
 }
 
-@Entity
 case class Text(data: String, _id: ObjectId = new ObjectId) {
   override def toString = s"Text(data=${data}, _id=${_id})"
 }

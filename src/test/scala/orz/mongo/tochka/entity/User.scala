@@ -4,7 +4,7 @@ import org.bson.types.ObjectId
 
 import orz.mongo.tochka._
 
-@Entity @CollectionName(name = "users")
+@CollectionName(name = "users")
 case class User(
   _id: Option[ObjectId],
   name: String,

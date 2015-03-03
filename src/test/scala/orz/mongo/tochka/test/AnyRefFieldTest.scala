@@ -184,7 +184,6 @@ class AnyRefFieldTest extends TestSuiteBase[Box] {
   
 }
 
-@Entity
 case class Box(text: String, date: Date, _id: ObjectId = new ObjectId) {
   
   private

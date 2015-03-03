@@ -24,6 +24,4 @@ package object tochka {
 
   type CollectionName = dsl.CollectionName
 
-  type Entity = dsl.Entity
-
 }

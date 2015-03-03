@@ -4,7 +4,6 @@ import org.bson.types.ObjectId
 
 import orz.mongo.tochka._
 
-@Entity
 case class Hoge(
     _id: Option[ObjectId]
   , fuga: Fuga

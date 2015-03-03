@@ -104,7 +104,6 @@ class SeqFieldTest extends TestSuiteBase[Texts] {
 
 }
 
-@Entity
 case class Texts(list: Seq[String], _id: ObjectId = new ObjectId) {
   
   override def toString = s"Texts(list=${list}, _id=${_id})"

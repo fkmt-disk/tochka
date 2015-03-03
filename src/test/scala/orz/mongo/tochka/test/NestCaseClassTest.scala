@@ -66,14 +66,12 @@ class NestCaseClassTest extends TestSuiteBase[Parent] {
   
 }
 
-@Entity
 case class Child(name: String) {
   
   override def toString = s"Child(name=${name})"
   
 }
 
-@Entity
 case class Parent(name: String, child: Child, _id: ObjectId = new ObjectId) {
   
   override def toString = s"Parent(name=${name}, child=${child})"

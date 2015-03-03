@@ -4,7 +4,6 @@ import java.util.Date
 
 import orz.mongo.tochka._
 
-@Entity
 case class Fuga(
     date: Date
   , piyo: Piyo

@@ -457,7 +457,6 @@ class NumberFieldTest extends TestSuiteBase[Numbers] {
 
 }
 
-@Entity
 case class Numbers(int: Int, long: Long, double: Double, _id: ObjectId = new ObjectId) {
   
   override def toString = s"Numbers(int=${int}, long=${long}, double=${double}, _id=${_id})"

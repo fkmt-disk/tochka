@@ -2,7 +2,6 @@ package orz.mongo.tochka.conv
 
 import orz.mongo.tochka._
 
-@Entity
 case class Piyo(
     int: Int
   , long: Long

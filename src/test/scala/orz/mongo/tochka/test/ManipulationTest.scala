@@ -128,7 +128,6 @@ class ManipulationTest extends TestSuiteBase[Book] {
 
 }
 
-@Entity
 case class Book(title: String, author: String, price: Int, _id: ObjectId = new ObjectId) {
 
   override def toString = s"Book(title=${title}, author=${author}, price=${price}, _id=${_id})"
