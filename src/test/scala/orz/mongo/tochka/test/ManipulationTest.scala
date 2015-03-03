@@ -8,39 +8,96 @@ import orz.mongo.tochka._
 import orz.mongo.tochka.test.util.Mongo
 
 class ManipulationTest extends TestSuiteBase[Book] {
-  
+
   val random = new Random
-  
+
   val testee = Seq(
-    Book("cobol",     "coboler",     random.nextInt),
+    Book("cobol-88",  "coboler",     random.nextInt),
+    Book("cobol-93",  "coboler",     random.nextInt),
     Book("lisp",      "lisper",      random.nextInt),
-    Book("perl",      "perl monger", random.nextInt),
+    Book("scheme",    "lisper",      random.nextInt),
     Book("ruby",      "rubyist",     random.nextInt),
+    Book("rails",     "rubyist",     random.nextInt),
     Book("python",    "pythonista",  random.nextInt),
+    Book("python3",   "pythonista",  random.nextInt),
+    Book("simula",    "smalltalker", Int.MaxValue),
     Book("smalltalk", "smalltalker", Int.MaxValue)
   )
 
-  test("update price") {
+  test("Book update") {
     Mongo.drive(conf) { implicit db =>
       init()
       
       val cond = testee(random.nextInt(testee.size))
       val updatePrice = 1
       
-      info(s"Book.where(title == ${cond.title}) <BeforeUpdate>")
-      val before = Book.where(_.title == cond.title).find
+      info(s"Book.where(author == ${cond.author}).find <BeforeUpdate>")
+      val before = Book.where(_.author == cond.author).find
       before.foreach(it => info(s"-> $it"))
       
-      info(s"Book.where(title == ${cond.title}).set(price := $updatePrice).update")
-      val count = Book.where(_.title == cond.title).set(_.price := updatePrice).update
+      info(s"Book.where(author == ${cond.author}).set(price := ${updatePrice}).update")
+      val count = Book.where(_.author == cond.author).set(_.price := updatePrice).update
       info(s"$count document updated!")
       
-      info(s"Book.find(title == ${cond.title}) <AfterUpdate>")
-      val after = Book.where(_.title == cond.title).find
-      after.foreach { book =>
-        info(s"-> $book")
-        book.price shouldEqual updatePrice
-      }
+      count shouldEqual before.size
+      
+      info(s"Book.where(author == ${cond.author}).find <AfterUpdate>")
+      val after = Book.where(_.author == cond.author).find
+      after.foreach(it => info(s"-> $it"))
+      
+      after.forall(it => it.price == updatePrice) shouldEqual true
+    }
+  }
+
+  test("Book updateOne") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val cond = testee(random.nextInt(testee.size))
+      val updatePrice = 1
+      
+      info(s"Book.where(author == ${cond.author}).find <BeforeUpdate>")
+      val before = Book.where(_.author == cond.author).find
+      before.foreach(it => info(s"-> $it"))
+      
+      info(s"Book.where(author == ${cond.author}).set(price := ${updatePrice}).updateOne")
+      val count = Book.where(_.author == cond.author).set(_.price := updatePrice).updateOne
+      info(s"$count document updated!")
+      
+      count shouldEqual 1
+      
+      info(s"Book.where(author == ${cond.author}).find <AfterUpdate>")
+      val after = Book.where(_.author == cond.author).find
+      after.foreach(it => info(s"-> $it"))
+      
+      after.filter(it => it.price == updatePrice).size shouldEqual 1
+    }
+  }
+
+  test("Book upsert") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val newBook = Book("parl", "perl monger", random.nextInt)
+      
+      info(s"Book.where(_id == ${newBook._id}).find <BeforeUpdate>")
+      val before = Book.where(_._id == newBook._id).find
+      info(s"-> size=${before.size}")
+      
+      assert(before.size == 0)
+      
+      info(s"Book.where(_id == ${newBook._id}).set(${newBook}).upsert")
+      val count = Book.where(_._id == newBook._id).set(newBook).upsert
+      info(s"$count document updated!")
+      
+      count shouldEqual 1
+      
+      info(s"Book.where(_id == ${newBook._id}).find <AfterUpdate>")
+      val after = Book.where(_._id == newBook._id).find
+      after.foreach(it => info(s"-> $it"))
+      
+      after.size shouldEqual 1
+      after.head shouldEqual newBook
     }
   }
 

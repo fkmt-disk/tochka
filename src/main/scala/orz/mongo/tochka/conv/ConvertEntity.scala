@@ -4,7 +4,6 @@ import scala.reflect.runtime.universe._
 
 import com.mongodb.casbah.Imports._
 
-import orz.mongo.tochka.conv
 import orz.mongo.tochka.util.ReflectionUtil._
 
 private[conv]
@@ -22,11 +21,11 @@ object ConvertEntity {
     } yield (typ, value, getDefault)
   }
 
-  def convert[T: TypeTag](dbo: MongoDBObject): T = convert(typeOf[T], dbo).asInstanceOf[T]
+  def convert[T: TypeTag](dbo: DBObject): T = convert(typeOf[T], dbo).asInstanceOf[T]
 
   private
-  def convert(typ: Type, dbo: MongoDBObject): AnyRef = {
-    require(conv.isEntity(typ))
+  def convert(typ: Type, dbo: DBObject): AnyRef = {
+    require(isCaseClass(typ))
 
     val comp = typ.getCompanion
     val compTyp = comp.toType
@@ -40,7 +39,7 @@ object ConvertEntity {
         convOption(t, value)
       case (t, Some(value), _) if t <:< SeqType =>
         convSeq(t, value.asDbList)
-      case (t, Some(value), _) if conv.isEntity(t) =>
+      case (t, Some(value), _) if isCaseClass(t) =>
         convert(t, value.asDbObj)
       case (t, Some(value), _) =>
         value.cast(t)
@@ -60,7 +59,7 @@ object ConvertEntity {
           convOption(t, value)
         case t if t <:< SeqType =>
           Some(convSeq(t, value.asDbList))
-        case t if conv.isEntity(t) =>
+        case t if isCaseClass(t) =>
           Some(convert(t, value.asDbObj))
         case t =>
           Some(value.cast(t))
@@ -74,7 +73,7 @@ object ConvertEntity {
         list.toList.map(e => convOption(t, e))
       case t if t <:< SeqType =>
         list.toList.map(e => convSeq(t, e.asDbList))
-      case t if conv.isEntity(t) =>
+      case t if isCaseClass(t) =>
         list.toList.map(e => convert(t, e.asDbObj))
       case t =>
         list.toList.map(_.cast(t))

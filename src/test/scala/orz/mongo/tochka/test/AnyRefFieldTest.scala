@@ -200,6 +200,6 @@ object Box extends Schema[Box] {
   
   case object date extends AnyRefField[Date]
   
-  case object _id extends AnyRefField[ObjectId]
+  case object _id extends IdField
   
 }

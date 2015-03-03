@@ -1,5 +1,7 @@
 package orz.mongo
 
+import com.mongodb.casbah.Imports._
+
 package object tochka {
 
   type Schema[T] = dsl.Schema[T]
@@ -15,6 +17,8 @@ package object tochka {
   type TextField = dsl.TextField
 
   type SeqField[T] = dsl.SeqField[T]
+
+  type IdField = dsl.AnyRefField[ObjectId]
 
   type AnyRefField[T <: AnyRef] = dsl.AnyRefField[T]
 

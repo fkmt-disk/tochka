@@ -23,7 +23,7 @@ object ConvertMap {
   }
 
   def convert(obj: Any): Map[String, Any] = {
-    require(isEntity(obj.getClass))
+    require(isCaseClass(obj.getClass))
     inspect(obj).map {
       case (name, value, typ) if typ <:< OptionType =>
         name -> convOption(typ, value.asOpt)
@@ -31,7 +31,7 @@ object ConvertMap {
         name -> convSeq(typ, value.asSeq)
       case (name, value, typ) if typ <:< MapType =>
         name -> convMap(typ, value.asMap)
-      case (name, value, typ) if conv.isEntity(typ) =>
+      case (name, value, typ) if isCaseClass(typ) =>
         name -> convert(value)
       case (name, value, _) =>
         name -> value
@@ -47,7 +47,7 @@ object ConvertMap {
         opt.map(e => convSeq(t, e.asSeq))
       case t if t <:< MapType =>
         opt.map(e => convMap(t, e.asMap))
-      case t if conv.isEntity(t) =>
+      case t if isCaseClass(t) =>
         opt.map(e => convert(e))
       case _ =>
         opt
@@ -63,7 +63,7 @@ object ConvertMap {
         seq.map(e => convSeq(t, e.asSeq))
       case t if t <:< MapType =>
         seq.map(e => convMap(t, e.asMap))
-      case t if conv.isEntity(t) =>
+      case t if isCaseClass(t) =>
         seq.map(e => convert(e))
       case _ =>
         seq
@@ -79,7 +79,7 @@ object ConvertMap {
         map.mapValues(e => convSeq(t, e.asSeq))
       case t if t <:< MapType =>
         map.mapValues(e => convMap(t, e.asMap))
-      case t if conv.isEntity(t) =>
+      case t if isCaseClass(t) =>
         map.mapValues(e => convert(e))
       case _ =>
         map

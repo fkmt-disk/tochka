@@ -95,6 +95,10 @@ class Schema[EntityType: TypeTag] {
       new Updater(where, $set(update.map(_.apply(Schema.this)): _*))
     }
     
+    def set(entity: EntityType): Updater = {
+      new Updater(where, Converter.toMap(entity))
+    }
+    
     def remove(implicit db: MongoDB): Int = {
       db(Schema.this.name).remove(where).getN
     }
