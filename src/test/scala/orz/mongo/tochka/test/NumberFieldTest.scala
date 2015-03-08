@@ -471,6 +471,6 @@ object Numbers extends Schema[Numbers] {
 
   case object double extends DoubleField
 
-  case object _id extends AnyRefField[ObjectId]
+  case object _id extends IdField
 
 }

@@ -1,8 +1,9 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-class DoubleField(val prefix: String = "") extends ComparableField {
-
+class DoubleField(protected val __prefix: String = "") extends ComparableField {
+  
+  protected
   type FieldType = Double
-
+  
 }

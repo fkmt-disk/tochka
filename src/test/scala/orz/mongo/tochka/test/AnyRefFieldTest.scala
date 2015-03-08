@@ -11,7 +11,7 @@ import orz.mongo.tochka._
 import orz.mongo.tochka.test.util.Mongo
 
 class AnyRefFieldTest extends TestSuiteBase[Box] {
-  
+
   val testee = Seq(
     Box("alpha", new Date),
     Box("bravo", new Date),
@@ -195,7 +195,7 @@ case class Box(text: String, date: Date, _id: ObjectId = new ObjectId) {
 
 object Box extends Schema[Box] {
   
-  case object text extends AnyRefField[String]
+  case object text extends TextField
   
   case object date extends AnyRefField[Date]
   

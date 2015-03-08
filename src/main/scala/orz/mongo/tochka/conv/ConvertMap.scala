@@ -7,7 +7,7 @@ import orz.mongo.tochka.util.ReflectionUtil._
 
 private[conv]
 object ConvertMap {
-
+  
   private
   def inspect(obj: Any): Seq[(String, Any, Type)] = {
     val clsType = obj.getClass.toType
@@ -21,7 +21,7 @@ object ConvertMap {
       typ = p.toType
     } yield (name, value, typ)
   }
-
+  
   def convert(obj: Any): Map[String, Any] = {
     require(isCaseClass(obj.getClass))
     inspect(obj).map {
@@ -37,7 +37,7 @@ object ConvertMap {
         name -> value
     }.toMap
   }
-
+  
   private
   def convOption(typ: Type, opt: Option[_]): Option[_] = {
     typ.typeArgs.head match {
@@ -53,7 +53,7 @@ object ConvertMap {
         opt
     }
   }
-
+  
   private
   def convSeq(typ: Type, seq: Seq[_]): Seq[_] = {
     typ.typeArgs.head match {
@@ -69,7 +69,7 @@ object ConvertMap {
         seq
     }
   }
-
+  
   private
   def convMap(typ: Type, map: Map[String, _]): Map[String, _] = {
     typ.typeArgs.last match {
@@ -85,12 +85,12 @@ object ConvertMap {
         map
     }
   }
-
+  
   private implicit
   class Castable(any: Any) {
     def asSeq: Seq[_] = any.asInstanceOf[Seq[_]]
     def asMap: Map[String, _] = any.asInstanceOf[Map[String, _]]
     def asOpt: Option[_] = any.asInstanceOf[Option[_]]
   }
-
+  
 }

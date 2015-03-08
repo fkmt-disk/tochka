@@ -6,9 +6,12 @@ import com.mongodb.casbah.Imports._
 
 import orz.mongo.tochka.util.ReflectionUtil._
 
+/**
+ * TODO: もう少しなんとかならんか。。。
+ */
 private[conv]
 object ConvertEntity {
-
+  
   private
   def inspect(typ: Type, comp: Type, dbo: MongoDBObject): Seq[(Type, Option[_], Symbol)] = {
     val constructor = typ.getConstructor
@@ -20,35 +23,37 @@ object ConvertEntity {
       getDefault = comp.getMember(s"apply$$default$$${i + 1}")
     } yield (typ, value, getDefault)
   }
-
+  
   def convert[T: TypeTag](dbo: DBObject): T = convert(typeOf[T], dbo).asInstanceOf[T]
-
+  
   private
   def convert(typ: Type, dbo: DBObject): AnyRef = {
     require(isCaseClass(typ))
-
+    
     val comp = typ.getCompanion
     val compTyp = comp.toType
-
+    
     val instance = comp.reflectInstance
-
+    
     val args = inspect(typ, compTyp, dbo).map {
-      case (_, None, getDefault) =>
-        instance.invoke(getDefault)
       case (t, Some(value), _) if t <:< OptionType =>
         convOption(t, value)
+      case (t, None, _) if t <:< OptionType =>
+        None
       case (t, Some(value), _) if t <:< SeqType =>
         convSeq(t, value.asDbList)
       case (t, Some(value), _) if isCaseClass(t) =>
         convert(t, value.asDbObj)
       case (t, Some(value), _) =>
         value.cast(t)
+      case (_, None, getDefault) =>
+        instance.invoke(getDefault)
     }
-
+    
     val apply = compTyp.getMembers("apply").find(_.toType.resultType =:= typ).get
     instance.invoke(apply, args: _*).asInstanceOf[AnyRef]
   }
-
+  
   private
   def convOption(typ: Type, value: Any): Option[_] = {
     if (value == null)
@@ -65,7 +70,7 @@ object ConvertEntity {
           Some(value.cast(t))
       }
   }
-
+  
   private
   def convSeq(typ: Type, list: MongoDBList): Seq[_] = {
     typ.typeArgs.head match {
@@ -79,23 +84,23 @@ object ConvertEntity {
         list.toList.map(_.cast(t))
     }
   }
-
+  
   private implicit
   class Castable(any: Any) {
-
+    
     def asDbObj: BasicDBObject = any.asInstanceOf[BasicDBObject]
-
+    
     def asDbList: BasicDBList = any.asInstanceOf[BasicDBList]
-
+    
     def cast(typ: Type) = any match {
       case s: String  => ofString(typ, s)
       case i: Int     => ofInt(typ, i)
       case l: Long    => ofLong(typ, l)
       case d: Double  => ofDouble(typ, d)
       case b: Boolean => b
-      case obj        => scala.reflect.runtime.currentMirror.runtimeClass(typ).cast(obj)
+      case obj        => typ.toClass.cast(obj)
     }
-
+    
     private
     def ofString(typ: Type, s: String) = typ match {
       case t if t <:< typeOf[String] =>
@@ -110,7 +115,7 @@ object ConvertEntity {
       case t =>
         throw new ClassCastException(s"String cannot be cast to $t")
     }
-
+    
     private
     def ofInt(typ: Type, i: Int) = typ match {
       case t if t <:< typeOf[Int] =>
@@ -126,7 +131,7 @@ object ConvertEntity {
       case t =>
         throw new ClassCastException(s"Int cannot be cast to $t")
     }
-
+    
     private
     def ofLong(typ: Type, l: Long) = typ match {
       case t if t <:< typeOf[Int] =>
@@ -145,7 +150,7 @@ object ConvertEntity {
       case t =>
         throw new ClassCastException(s"Long cannot be cast to $t")
     }
-
+    
     private
     def ofDouble(typ: Type, d: Double) = typ match {
       case t if t <:< typeOf[Int] =>
@@ -170,7 +175,7 @@ object ConvertEntity {
       case t =>
         throw new ClassCastException(s"Double cannot be cast to $t")
     }
-
+    
   }
-
+  
 }

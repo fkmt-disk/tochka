@@ -1,27 +1,25 @@
 package orz.mongo
 
-import com.mongodb.casbah.Imports._
-
 package object tochka {
-
+  
   type Schema[T] = dsl.Schema[T]
-
+  
   type BoolField = dsl.BoolField
-
+  
   type IntField = dsl.IntField
-
+  
   type LongField = dsl.LongField
-
+  
   type DoubleField = dsl.DoubleField
-
+  
   type TextField = dsl.TextField
-
+  
   type SeqField[T] = dsl.SeqField[T]
-
-  type IdField = dsl.AnyRefField[ObjectId]
-
+  
+  type IdField = dsl.IdField
+  
   type AnyRefField[T <: AnyRef] = dsl.AnyRefField[T]
-
+  
   type CollectionName = dsl.CollectionName
-
+  
 }

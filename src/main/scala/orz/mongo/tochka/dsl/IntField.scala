@@ -1,8 +1,9 @@
 package orz.mongo.tochka.dsl
 
 private[tochka]
-class IntField(val prefix: String = "") extends ComparableField {
-
+class IntField(protected val __prefix: String = "") extends ComparableField {
+  
+  protected
   type FieldType = Int
-
+  
 }

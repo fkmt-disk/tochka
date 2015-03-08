@@ -1,23 +1,28 @@
 package orz.mongo.tochka.test
 
+import scala.language.implicitConversions
+
 import scala.util.Random
 
 import com.mongodb.casbah.Imports._
 
 import orz.mongo.tochka._
+import orz.mongo.tochka.conv._
 import orz.mongo.tochka.test.util.Mongo
 
 class NestCaseClassTest extends TestSuiteBase[Parent] {
   
+  implicit def toOpt[T](any: Any): Option[T] = Option(any.asInstanceOf[T])
+  
   val testee = Seq(
-    Parent("alpha", Child("spam")),
-    Parent("bravo", Child("ham")),
-    Parent("charlie", Child("eggs"))
+    Parent("alpha", Child("spam", "hoge")),
+    Parent("bravo", Child("ham", "hoge")),
+    Parent("charlie", Child("eggs", "fuga"))
   )
   
   test("insert") {
     Mongo.drive(conf) { implicit db =>
-      val testee = Parent("foo", Child("foobar"))
+      val testee = Parent("foo", Child("foobar", "bazqux"))
       
       init(Seq(testee))
       
@@ -31,7 +36,8 @@ class NestCaseClassTest extends TestSuiteBase[Parent] {
           casb.get("name") shouldEqual testee.name
           casb.get("child") match {
             case child: DBObject =>
-              child.get("name") shouldEqual testee.child.name
+              child.get("name") shouldEqual testee.child.get.name
+              child.get("tag") shouldEqual testee.child.get.tag
             case any =>
               fail(s"child type is not MongoDBObject: ${any}")
           }
@@ -47,17 +53,107 @@ class NestCaseClassTest extends TestSuiteBase[Parent] {
       
       val cond = testee(new Random().nextInt(testee.size))
       
-      info(s"Parent.where(child.name == ${cond.child.name}).find")
-      val result = Parent.where(_.child.name == cond.child.name).find
+      info(s"Parent.where(child.name == ${cond.child.get.name}).find")
+      val result = Parent.where(_.child.name == cond.child.get.name).find
       result.foreach(it => info(s"-> $it"))
       
-      val expect = testee.filter(it => it.child.name == cond.child.name).sortBy(_._id)
+      val expect = testee.filter(it => it.child.get.name == cond.child.get.name).sortBy(_._id)
       
       result.size shouldEqual expect.size
       result.sortBy(_._id) shouldEqual expect
       
-      info(s"Parent.find(child.name $$eq ${cond.child.name}) @casbah")
-      val casbah = db("Parent").find("child.name" $eq cond.child.name).toList
+      info(s"Parent.find(child.name $$eq ${cond.child.get.name}) @casbah")
+      val casbah = db("Parent").find("child.name" $eq cond.child.get.name).toList
+      casbah.foreach(it => info(s"-> $it"))
+      
+      assertEquals2casbah(result, casbah)
+    }
+  }
+  
+  test("find child.tag neq ?") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val cond = testee(new Random().nextInt(testee.size))
+      
+      info(s"Parent.where(child.tag != ${cond.child.get.tag}).find")
+      val result = Parent.where(_.child.tag != cond.child.get.tag).find
+      result.foreach(it => info(s"-> $it"))
+      
+      val expect = testee.filter(it => it.child.get.tag != cond.child.get.tag).sortBy(_._id)
+      
+      result.size shouldEqual expect.size
+      result.sortBy(_._id) shouldEqual expect
+      
+      info(s"Parent.find(child.tag $$ne ${cond.child.get.tag}) @casbah")
+      val casbah = db("Parent").find("child.tag" $ne cond.child.get.tag).toList
+      casbah.foreach(it => info(s"-> $it"))
+      
+      assertEquals2casbah(result, casbah)
+    }
+  }
+  
+  test("find child eql None") {
+    Mongo.drive(conf) { implicit db =>
+      val cond = Parent("delta", None)
+      
+      init(testee :+ cond)
+      
+      info(s"Parent.where(child == ${cond.child}).find")
+      val result = Parent.where(_.child == cond.child).findOne.get
+      info(s"-> $result")
+      
+      result shouldEqual cond
+      
+      info(s"Parent.findOne(child $$eq None) @casbah")
+      // なんだこの書き方...ありえねぇ
+      val casbah = db("Parent").findOne(DBObject("child" -> DBObject("$eq" -> cond.child))).get
+      info(s"-> $casbah")
+      
+      assertEquals2casbah(Seq(result), Seq(casbah))
+    }
+  }
+  
+  test("find child eql ?") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val cond = testee(new Random().nextInt(testee.size))
+      
+      info(s"Parent.where(child == ${cond.child}).find")
+      val result = Parent.where(_.child == cond.child).find
+      result.foreach(it => info(s"-> $it"))
+      
+      val expect = testee.filter(it => it.child == cond.child).sortBy(_._id)
+      
+      result.size shouldEqual expect.size
+      result.sortBy(_._id) shouldEqual expect
+      
+      info(s"Parent.find($$and(child.name $$eq ${cond.child.get.name}, child.tag $$eq ${cond.child.get.tag})) @casbah")
+      val casbah = db("Parent").find($and("child.name" $eq cond.child.get.name, "child.tag" $eq cond.child.get.tag)).toList
+      casbah.foreach(it => info(s"-> $it"))
+      
+      assertEquals2casbah(result, casbah)
+    }
+  }
+  
+  test("find child neq ?") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val cond = testee(new Random().nextInt(testee.size))
+      
+      info(s"Parent.where(child != ${cond.child}).find")
+      val result = Parent.where(_.child != cond.child).find
+      result.foreach(it => info(s"-> $it"))
+      
+      val expect = testee.filter(it => it.child != cond.child).sortBy(_._id)
+      
+      result.size shouldEqual expect.size
+      result.sortBy(_._id) shouldEqual expect
+      
+      info(s"Parent.find($$or(child.name $$ne ${cond.child.get.name}, child.tag $$ne ${cond.child.get.tag})) @casbah")
+      val casbah = db("Parent").find($or("child.name" $ne cond.child.get.name, "child.tag" $ne cond.child.get.tag)).toList
       casbah.foreach(it => info(s"-> $it"))
       
       assertEquals2casbah(result, casbah)
@@ -66,13 +162,13 @@ class NestCaseClassTest extends TestSuiteBase[Parent] {
   
 }
 
-case class Child(name: String) {
+case class Child(name: String, tag: String) {
   
-  override def toString = s"Child(name=${name})"
+  override def toString = s"Child(name=${name}, tag=${tag})"
   
 }
 
-case class Parent(name: String, child: Child, _id: ObjectId = new ObjectId) {
+case class Parent(name: String, child: Option[Child], _id: ObjectId = new ObjectId) {
   
   override def toString = s"Parent(name=${name}, child=${child})"
   
@@ -80,11 +176,13 @@ case class Parent(name: String, child: Child, _id: ObjectId = new ObjectId) {
 
 object Parent extends Schema[Parent] {
   
-  case object name extends AnyRefField[String]
+  case object name extends TextField
   
-  case object child {
+  case object child extends AnyRefField[Child] {
     
-    case object name extends AnyRefField[String]("child")
+    case object name extends TextField("child")
+    
+    case object tag extends TextField("child")
     
   }
   

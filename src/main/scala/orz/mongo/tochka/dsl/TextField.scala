@@ -5,10 +5,11 @@ import scala.util.matching.Regex
 import com.mongodb.casbah.Imports._
 
 private[tochka]
-class TextField(val prefix: String = "") extends Field {
-
+class TextField(protected val __prefix: String = "") extends Field {
+  
+  protected
   type FieldType = String
-
-  def =~(value: Regex): WhereClause = new WhereClause(name $eq value)
-
+  
+  def =~(value: Regex): WhereClause = WhereClause(__name, "$regex", value)
+  
 }

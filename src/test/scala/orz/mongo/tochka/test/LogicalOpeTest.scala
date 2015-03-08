@@ -153,6 +153,6 @@ object Triple extends Schema[Triple] {
   
   case object three extends BoolField
   
-  case object _id extends AnyRefField[ObjectId]
+  case object _id extends IdField
   
 }

@@ -4,15 +4,15 @@ import scala.reflect.runtime.universe._
 
 import com.mongodb.casbah.Imports._
 
-import orz.mongo.tochka.conv.Converter
+import orz.mongo.tochka.conv
 import orz.mongo.tochka.util.ReflectionUtil._
 
 private[tochka]
 class Schema[EntityType: TypeTag] {
-
+  
   private type SchemaType = this.type
   private type S = SchemaType
-
+  
   private type ToWhere1 = (S) => WhereClause
   private type ToWhere2 = (S,S) => WhereClause
   private type ToWhere3 = (S,S,S) => WhereClause
@@ -35,7 +35,7 @@ class Schema[EntityType: TypeTag] {
   private type ToWhere20 = (S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S) => WhereClause
   private type ToWhere21 = (S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S) => WhereClause
   private type ToWhere22 = (S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,S) => WhereClause
-
+  
   def where(w: ToWhere1): Query = new Query(w.apply(this).value)
   def where(w: ToWhere2): Query = new Query(w.apply(this,this).value)
   def where(w: ToWhere3): Query = new Query(w.apply(this,this,this).value)
@@ -58,33 +58,32 @@ class Schema[EntityType: TypeTag] {
   def where(w: ToWhere20): Query = new Query(w.apply(this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this).value)
   def where(w: ToWhere21): Query = new Query(w.apply(this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this).value)
   def where(w: ToWhere22): Query = new Query(w.apply(this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this,this).value)
-
+  
   private
   val name = {
     val cls = typeOf[EntityType].toClass
     cls.getAnnot[CollectionName].map(_.name).getOrElse(cls.getSimpleName)
   }
-
+  
   def findAll(implicit db: MongoDB): Seq[EntityType] = {
-    db(name).find.toList.map(Converter.toEntity[EntityType](_))
+    db(name).find.toList.map(conv.toEntity[EntityType](_))
   }
-
+  
   def insert(entity: EntityType)(implicit db: MongoDB) {
-    db(name).insert(Converter.toMap(entity))
+    db(name).insert(conv.toMap(entity))
   }
-
+  
   def drop(implicit db: MongoDB) {
     db(name).drop
   }
-
-
+  
   class Query(where: DBObject) {
     
     private
     type ToSet = SchemaType => (String, Any)
     
     def find(implicit db: MongoDB): Seq[EntityType] = {
-      db(Schema.this.name).find(where).toList.map(Converter.toEntity[EntityType](_))
+      db(Schema.this.name).find(where).toList.map(conv.toEntity[EntityType](_))
     }
     
     def findOne(implicit db: MongoDB): Option[EntityType] = {
@@ -96,7 +95,7 @@ class Schema[EntityType: TypeTag] {
     }
     
     def set(entity: EntityType): Updater = {
-      new Updater(where, Converter.toMap(entity))
+      new Updater(where, conv.toMap(entity))
     }
     
     def remove(implicit db: MongoDB): Int = {
@@ -104,7 +103,7 @@ class Schema[EntityType: TypeTag] {
     }
     
   }
-
+  
   class Updater(where: DBObject, set: DBObject) {
     
     def update(implicit db: MongoDB): Int = {
@@ -120,5 +119,5 @@ class Schema[EntityType: TypeTag] {
     }
     
   }
-
+  
 }

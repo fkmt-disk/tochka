@@ -1,5 +1,7 @@
 package orz.mongo.tochka.test
 
+import scala.util.Random
+
 import com.mongodb.casbah.Imports._
 
 import orz.mongo.tochka._
@@ -30,6 +32,52 @@ class SeqFieldTest extends TestSuiteBase[Texts] {
         case None =>
           fail("find by casbah result is None")
       }
+    }
+  }
+
+  test("find list eql ?") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val cond = testee(new Random().nextInt(testee.size))
+      
+      info(s"Texts.where(list == ${cond.list}).find")
+      val result = Texts.where(_.list == cond.list).find
+      result.foreach(it => info(s"-> $it"))
+      
+      val expect = testee.filter(_.list == cond.list).sortBy(_._id)
+      
+      result.size shouldEqual expect.size
+      result.sortBy(_._id) shouldEqual expect
+      
+      info(s"Texts.find(list $$eq ${cond.list}) @casbah")
+      val casbah = db("Texts").find("list" $eq cond.list).toList
+      casbah.foreach(it => info(s"-> $it"))
+      
+      assertEquals2casbah(result, casbah)
+    }
+  }
+
+  test("find list neq ?") {
+    Mongo.drive(conf) { implicit db =>
+      init()
+      
+      val cond = testee(new Random().nextInt(testee.size))
+      
+      info(s"Texts.where(list != ${cond.list}).find")
+      val result = Texts.where(_.list != cond.list).find
+      result.foreach(it => info(s"-> $it"))
+      
+      val expect = testee.filter(_.list != cond.list).sortBy(_._id)
+      
+      result.size shouldEqual expect.size
+      result.sortBy(_._id) shouldEqual expect
+      
+      info(s"Texts.find(list $$ne ${cond.list}) @casbah")
+      val casbah = db("Texts").find("list" $ne cond.list).toList
+      casbah.foreach(it => info(s"-> $it"))
+      
+      assertEquals2casbah(result, casbah)
     }
   }
 
@@ -114,6 +162,6 @@ object Texts extends Schema[Texts] {
 
   case object list extends SeqField[String]
 
-  case object _id extends AnyRefField[ObjectId]
+  case object _id extends IdField
 
 }

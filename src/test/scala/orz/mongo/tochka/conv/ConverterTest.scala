@@ -5,7 +5,7 @@ import org.scalatest._
 class ConverterTest extends FunSuite with Matchers {
 
   test("toMap") {
-    val result = Converter.toMap(Hoge.testee)
+    val result = toMap(Hoge.testee)
     result shouldEqual Hoge.expect
   }
 

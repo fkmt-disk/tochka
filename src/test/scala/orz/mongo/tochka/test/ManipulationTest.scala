@@ -135,15 +135,13 @@ case class Book(title: String, author: String, price: Int, _id: ObjectId = new O
 }
 
 object Book extends Schema[Book] {
-
+  
   case object title extends TextField
-
+  
   case object author extends TextField
-
+  
   case object price extends IntField
-
-  case object _id extends AnyRefField[ObjectId]
-
+  
+  case object _id extends IdField
+  
 }
-
-
