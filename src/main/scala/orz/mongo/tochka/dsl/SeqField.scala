@@ -1,7 +1,5 @@
 package orz.mongo.tochka.dsl
 
-import com.mongodb.casbah.Imports._
-
 private[tochka]
 class SeqField[T](protected val __prefix: String = "") extends Field {
   

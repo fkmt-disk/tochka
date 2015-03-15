@@ -12,7 +12,7 @@ package object tochka {
   
   type DoubleField = dsl.DoubleField
   
-  type TextField = dsl.TextField
+  type StringField = dsl.StringField
   
   type SeqField[T] = dsl.SeqField[T]
   

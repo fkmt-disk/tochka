@@ -7,7 +7,7 @@ import com.mongodb.casbah.Imports._
 import orz.mongo.tochka._
 import orz.mongo.tochka.test.util.Mongo
 
-class TextFieldTest extends TestSuiteBase[Text] {
+class StringFieldTest extends TestSuiteBase[Text] {
   
   val random = new Random
   
@@ -113,6 +113,6 @@ case class Text(data: String, _id: ObjectId = new ObjectId) {
 }
 
 object Text extends Schema[Text] {
-  case object data extends TextField
+  case object data extends StringField
   case object _id extends IdField
 }

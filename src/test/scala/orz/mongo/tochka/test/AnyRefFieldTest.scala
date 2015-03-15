@@ -195,7 +195,7 @@ case class Box(text: String, date: Date, _id: ObjectId = new ObjectId) {
 
 object Box extends Schema[Box] {
   
-  case object text extends TextField
+  case object text extends StringField
   
   case object date extends AnyRefField[Date]
   

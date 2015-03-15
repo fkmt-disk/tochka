@@ -176,13 +176,13 @@ case class Parent(name: String, child: Option[Child], _id: ObjectId = new Object
 
 object Parent extends Schema[Parent] {
   
-  case object name extends TextField
+  case object name extends StringField
   
   case object child extends AnyRefField[Child] {
     
-    case object name extends TextField("child")
+    case object name extends StringField("child")
     
-    case object tag extends TextField("child")
+    case object tag extends StringField("child")
     
   }
   

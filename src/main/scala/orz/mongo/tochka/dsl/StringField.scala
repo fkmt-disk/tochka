@@ -2,10 +2,8 @@ package orz.mongo.tochka.dsl
 
 import scala.util.matching.Regex
 
-import com.mongodb.casbah.Imports._
-
 private[tochka]
-class TextField(protected val __prefix: String = "") extends Field {
+class StringField(protected val __prefix: String = "") extends Field {
   
   protected
   type FieldType = String

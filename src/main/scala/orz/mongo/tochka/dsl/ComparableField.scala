@@ -1,7 +1,5 @@
 package orz.mongo.tochka.dsl
 
-import com.mongodb.casbah.Imports._
-
 private[dsl]
 trait ComparableField extends Field {
   
