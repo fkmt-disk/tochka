@@ -26,12 +26,13 @@ lazy val root = (project in file("."))
 import com.mongodb.casbah.Imports._
 import orz.mongo.tochka._
 
-case class Book(author: String, title: String, price: Int)
+case class Book(author: String, title: String, price: Int, _id: ObjectId = new ObjectId)
 
 object Book extends Schema[Book] {
   case object author extends StringField
   case object title extends StringField
   case object price extends IntField
+  case object _id extends IdField
 }
 
 object Test extends App {
@@ -47,7 +48,7 @@ object Test extends App {
     val books: Seq[Book] = Book.where(_.author == "foo" && _.price >= 2000).find
     
     // update
-    Book.where(_.title == "hoge").set(price = 1000).update
+    Book.where(_.title == "hoge").set(price := 1000).update
     
     // remove
     Book.where(_.price <= 1000).remove
