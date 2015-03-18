@@ -62,4 +62,4 @@ object Test extends App {
 
 ---
 
-[wiki](https://github.com/fkmt-disk/tochka/wiki)
+#### [Wiki](https://github.com/fkmt-disk/tochka/wiki)
