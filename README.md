@@ -1,68 +1,64 @@
 ### tochka
 
-wrapper of casbah(mongodb-driver) by scala
+wrapper of casbah(mongodb-driver) @scala
 
-#### find
+---
 
-Given("a test database, like this")
+#### build.sbt
 
-```javascript
-db.User = [
-  {
-    _id: ObjectId(...),
-    code: 1,
-    name: "user1",
-    email: "user1@example"
+```scala
+lazy val root = (project in file("."))
+  .dependsOn(
+    RootProject(uri("git://github.com/fkmt-disk/tochka.git#v0.1"))
+  )
+  .settings(
+    name := "sample",
+    version := "1.0",
+    scalaVersion := "2.11.5"
+  )
+```
+
+---
+
+#### sample
+
+```scala
+import com.mongodb.casbah.Imports._
+import orz.mongo.tochka._
+
+case class Book(author: String, title: String, price: Int)
+
+object Book extends Schema[Book] {
+  case object author extends StringField
+  case object title extends StringField
+  case object price extends IntField
+}
+
+object Test extends App {
+  val client: MongoClient = MongoClient("localhost", 27017)
+  try {
+    
+    implicit db: MongoDB = client("test")
+    
+    // insert
+    Book.insert( Book(author="FooBar", title="HogeFuga", price=1200) )
+    
+    // find
+    val books: Seq[Book] = Book.where(_.author == "foo" && _.price >= 2000).find
+    
+    // update
+    Book.where(_.title == "hoge").set(price = 1000).update
+    
+    // remove
+    Book.where(_.price <= 1000).remove
+    
   }
-]
+  finally {
+    client.close
+  }
+}
 ```
 
-And("given a case class, like this")
+---
 
-```scala
-package sample.entity
-case class User(code: Int, name: String, email: Option[String], _id: ObjectId=new ObjectId)
-```
-
-When("executed this statement")
-
-```scala
-import sample.entity.User
-val users: Seq[User] = User.where(_.name == "user1").find
-```
-
-Then("sequence of User obtained")  
-And("MongoDBObject data stored into a User")
-
-```scala
-val user = users.head
-println(user.code) // => 1
-println(user.nane) // => user1
-println(user.email) // => Some(user1@example)
-println(user._id) // => ObjectId(...)
-```
-
-
-#### insert
-
-```scala
-import sample.entity.User
-val user = User(2, "user2", None)
-User.insert(user)
-```
-
-
-#### update
-
-```scala
-import sample.entity.User
-val count: Int = User.where(_.name == "user1").set(_.code := 100).update
-```
-
-
-#### remove
-
-```scala
-import sample.entity.User
-val count: Int = User.where(_.name =~ "^user".r).remove
-```
+[wiki](https://github.com/fkmt-disk/tochka/wiki)
